@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Qt Crypto Algorithms
+GenericName=qt-crypto-algoritms
+Comment=Implementation of cryptographic algorithms (RSA, El-Gamal, Diffie-Hellman) using Qt
+Exec=/usr/local/bin/qt-crypto-algoritms
+Icon=/usr/local/share/icons/hicolor/64x64/apps/qt-crypto-algoritms.svg
+Categories=Utility
