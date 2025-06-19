@@ -215,6 +215,7 @@ Temporary Items
 
 # Build directory
 build/
+out/
 
 # Clang cache
 .cache/
