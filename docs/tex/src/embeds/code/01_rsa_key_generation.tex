@@ -1,0 +1,60 @@
+
+\begin{nvimstyle}
+BigInt RSA::generatePrime(unsigned int bits, boost::random::mt19937& rng)
+{
+	// Задаем диапазон для генерации числа с нужным количеством бит
+	BigInt											lower_bound = BigInt(1) << (bits - 1);
+	BigInt											upper_bound = (BigInt(1) << bits) - 1;
+	boost::random::uniform_int_distribution<BigInt> dist(lower_bound, upper_bound);
+
+	BigInt candidate;
+	while (true)
+	{
+		candidate = dist(rng);
+		// Убедимся, что число нечетное
+		if (candidate % 2 == 0)
+		{
+			candidate++;
+		}
+		// Проверяем на простоту с помощью теста Миллера-Рабина
+		// 25 итераций дают очень высокую вероятность того, что число простое
+		if (boost::multiprecision::miller_rabin_test(candidate, 25))
+		{
+			return candidate;
+		}
+	}
+}
+\end{nvimstyle}
+
+\begin{nvimstyle}
+void RSA::generateKeys()
+{
+    // 1. Инициализация генератора случайных чисел
+    boost::random::mt19937 rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+
+    // 2. Генерация двух различных простых чисел p и q
+    unsigned int prime_bits = m_key_bits / 2;
+    do
+    {
+        m_p = generatePrime(prime_bits, rng);
+        m_q = generatePrime(prime_bits, rng);
+    } while (m_p == m_q);
+
+    // 3. Вычисление модуля m и функции Эйлера phi(m)
+    m_m   = m_p * m_q;
+    m_phi = (m_p - 1) * (m_q - 1);
+
+    // 4. Выбор открытой экспоненты e
+    m_e = 65537;
+    if (boost::multiprecision::gcd(m_e, m_phi) != 1)
+    {
+        // В маловероятном случае, если 65537 не подходит,
+        // генерируем ключи заново
+        generateKeys();
+        return;
+    }
+
+    // 5. Вычисление закрытой экспоненты d
+    m_d = inverse(m_e, m_phi);
+}
+\end{nvimstyle}

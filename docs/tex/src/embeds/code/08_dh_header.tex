@@ -1,0 +1,61 @@
+\begin{nvimstyle}
+#ifndef DIFFIE_HELLMAN_HPP
+#define DIFFIE_HELLMAN_HPP
+
+#include "protocol.hpp"
+
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/random/mersenne_twister.hpp>
+
+using BigInt = boost::multiprecision::cpp_int;
+
+namespace CRYPTO
+{
+class DiffieHellman final : public Protocol
+{
+public:
+	explicit DiffieHellman(unsigned int prime_bits = 512);
+	void init() override;
+\end{nvimstyle}
+
+\begin{nvimstyle}
+	QString encrypt(const QString& plaintext) override;
+	QString decrypt(const QString& ciphertext) override;
+
+	void generateSharedSecret();
+
+	BigInt getPrime();
+	BigInt getPublicKey() const;
+
+	void setOtherPartyPublicKey(const BigInt& key);
+	void setOtherPartyPrime(const BigInt& prime);
+
+private:
+	void generateParameters();
+	void generateKeys();
+    
+	BigInt generatePrime(unsigned int bits, boost::random::mt19937& rng);
+
+private:
+	// --- Параметры и ключи Диффи-Хеллмана ---
+	unsigned int m_prime_bits;
+
+	// Публичные параметры, общие для обеих сторон
+	BigInt m_p; // Простое число-модуль `p`
+	BigInt m_g; // Первообразный корень (генератор) `g`
+
+	// Ключи этого участника
+	BigInt m_private_key; // Закрытый ключ (секретное число `a` или `b`)
+	BigInt m_public_key;  // Открытый ключ (A = g^a mod p или B = g^b mod p)
+
+	// Данные, полученные от другого участника
+	BigInt m_other_party_public_key; // Открытый ключ другого участника (A или B)
+
+	// Финальный результат
+	BigInt m_shared_secret; // Общий секретный ключ `s = (B^a) mod p = (A^b) mod p`
+};
+
+} // namespace CRYPTO
+
+#endif // DIFFIE_HELLMAN_HPP
+\end{nvimstyle}

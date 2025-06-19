@@ -1,0 +1,24 @@
+\begin{nvimstyle}
+void DiffieHellman::generateParameters()
+{
+	boost::random::mt19937 rng(std::random_device {}());
+
+	// Шаг 1: Генерация большого простого числа p
+	m_p = generatePrime(m_prime_bits, rng);
+
+	// Шаг 2: Выбор генератора g
+	m_g = 5;
+}
+
+void DiffieHellman::generateKeys()
+{
+	boost::random::mt19937 rng(std::random_device {}());
+
+	// Шаг 3: Генерация закрытого ключа `a`
+	boost::multiprecision::uniform_int_distribution<BigInt> dist(2, m_p - 2);
+	m_private_key = dist(rng);
+
+	// Шаг 4: Вычисление открытого ключа A = g^a mod p
+	m_public_key = boost::multiprecision::powm(m_g, m_private_key, m_p);
+}
+\end{nvimstyle}

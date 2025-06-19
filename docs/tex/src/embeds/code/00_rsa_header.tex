@@ -1,0 +1,42 @@
+\begin{nvimstyle}
+#ifndef RSA_HPP
+#define RSA_HPP
+
+#include "protocol.hpp"
+
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/random/mersenne_twister.hpp>
+
+using BigInt = boost::multiprecision::cpp_int;
+
+namespace CRYPTO
+{
+class RSA final : public Protocol
+{
+public:
+	explicit RSA(unsigned int key_bits = 2048);
+
+	void init() override;
+
+	QString encrypt(const QString& plaintext) override;
+	QString decrypt(const QString& ciphertext) override;
+
+private:
+	void generateKeys();
+	BigInt generatePrime(unsigned int bits, boost::random::mt19937& rng);
+
+	// Параметры RSA
+	unsigned int m_key_bits;
+	BigInt		 m_m; // Модуль m = p * q (часть открытого ключа)
+	BigInt		 m_e; // Открытая экспонента e (часть открытого ключа)
+	BigInt		 m_d; // Закрытая экспонента d (закрытый ключ)
+
+	// Простые множители сохраняются для потенциального использования, но являются частью закрытого ключа
+	BigInt m_p, m_q;
+	BigInt m_phi; // Функция Эйлера: phi(n) = (p-1)*(q-1)
+};
+} // namespace CRYPTO
+
+#endif // RSA_HPP
+
+\end{nvimstyle}

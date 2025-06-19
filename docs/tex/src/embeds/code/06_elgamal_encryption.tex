@@ -1,0 +1,38 @@
+\begin{nvimstyle}
+QString ElGamal::encrypt(const QString& plaintext)
+{
+	if (m_p == 0 || m_g == 0 || m_e == 0)
+	{
+		throw std::runtime_error("ElGamal is not initialized. Call init() before encryption.");
+	}
+
+	// 1. Преобразуем открытый текст в BigInt s (через hex, как в RSA).
+	QByteArray bytes		 = plaintext.toUtf8();
+	QString	   hex_plaintext = bytes.toHex();
+	BigInt	   s("0x" + hex_plaintext.toStdString());
+
+	if (s >= m_p)
+	{
+		throw std::runtime_error("Message is too large for the current key size.");
+	}
+\end{nvimstyle}
+\begin{nvimstyle}
+	// 2. Выбираем случайное сессионное (эфемерное) число k: 1 < k < p-1.
+	boost::random::mt19937							rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+	boost::random::uniform_int_distribution<BigInt> dist(2, m_p - 2);
+	BigInt											k = dist(rng);
+
+	// 3. Вычисляем первую компоненту шифртекста: r = g^k mod p.
+	BigInt r = boost::multiprecision::powm(m_g, k, m_p);
+
+	// 4. Вычисляем вторую компоненту шифртекста: c = s * e^k mod p.
+	BigInt e_k = boost::multiprecision::powm(m_e, k, m_p);
+	BigInt c   = (s * e_k) % m_p;
+
+	// 5. Формируем шифртекст: пара (r, c) в виде hex-строк, разделенных пробелом.
+	QString r_hex = QString::fromStdString(r.str(0, std::ios_base::hex));
+	QString c_hex = QString::fromStdString(c.str(0, std::ios_base::hex));
+
+	return r_hex + " " + c_hex;
+}
+\end{nvimstyle}

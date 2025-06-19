@@ -1,0 +1,25 @@
+\begin{nvimstyle}
+QString RSA::decrypt(const QString& ciphertext)
+{
+    // 1. Преобразуем шифротекст в BigInt
+    BigInt encrypted_message("0x" + ciphertext.toStdString());
+
+    // 2. Расшифровываем: m = c^d mod n
+    BigInt decrypted_message = boost::multiprecision::powm(encrypted_message, m_d, m_m);
+
+    // 3. Преобразуем расшифрованное число обратно в шестнадцатеричную строку
+    std::string hex_str = decrypted_message.str(0, std::ios_base::hex);
+
+    // 4. Восстанавливаем возможный утерянный ведущий ноль
+    if (hex_str.length() % 2 != 0)
+    {
+        hex_str.insert(0, "0");
+    }
+
+    // 5. Преобразуем шестнадцатеричную строку обратно в QByteArray
+    QByteArray bytes = QByteArray::fromHex(QByteArray::fromStdString(hex_str));
+
+    // 6. Создаем QString из байтов в кодировке UTF-8
+    return QString::fromUtf8(bytes);
+}
+\end{nvimstyle}

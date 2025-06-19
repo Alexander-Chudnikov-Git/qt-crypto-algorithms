@@ -1,0 +1,25 @@
+\begin{nvimstyle}
+QString RSA::encrypt(const QString& plaintext)
+{
+    // 1. Преобразуем открытый текст в байты
+    QByteArray bytes = plaintext.toUtf8();
+    
+    // 2. Преобразуем байты в шестнадцатеричную строку.
+    QString hex_plaintext = bytes.toHex();
+    
+    // 3. Преобразуем шестнадцатеричную строку в BigInt.
+    BigInt message("0x" + hex_plaintext.toStdString());
+
+    // 4. Проверяем, что сообщение меньше модуля n
+    if (message >= m_m)
+    {
+        throw std::runtime_error("Message is too large for the current key size.");
+    }
+
+    // 5. Шифруем: c = m^e mod n
+    BigInt ciphertext = boost::multiprecision::powm(message, m_e, m_m);
+
+    // 6. Преобразуем зашифрованное число в строку в шестнадцатеричном формате
+    return QString::fromStdString(ciphertext.str(0, std::ios_base::hex));
+}
+\end{nvimstyle}

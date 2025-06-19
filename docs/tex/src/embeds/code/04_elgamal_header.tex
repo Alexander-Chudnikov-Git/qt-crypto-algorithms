@@ -1,0 +1,43 @@
+\begin{nvimstyle}
+#ifndef ELGAMAL_HPP
+#define ELGAMAL_HPP
+
+#include "protocol.hpp"
+
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/random/mersenne_twister.hpp>
+
+using BigInt = boost::multiprecision::cpp_int;
+
+namespace CRYPTO
+{
+class ElGamal final : public Protocol
+{
+public:
+	explicit ElGamal(unsigned int key_bits = 2048);
+
+	void init() override;
+
+	QString encrypt(const QString& plaintext) override;
+	QString decrypt(const QString& ciphertext) override;
+
+private:
+	void generateParameters();
+	void generateKeys();
+	BigInt generatePrime(unsigned int bits, boost::random::mt19937& rng);
+
+	unsigned int m_key_bits; // Длина ключа в битах
+
+	// Публичные параметры, общие для всех
+	BigInt m_p; // Большое простое число (модуль)
+	BigInt m_g; // Порождающий элемент (генератор)
+
+	// Ключи
+	BigInt m_d; // Закрытый ключ (секретное число, 1 < d < p-1)
+	BigInt m_e; // Открытый ключ (e = g^d mod p)
+};
+
+} // namespace CRYPTO
+
+#endif // ELGAMAL_HPP
+\end{nvimstyle}

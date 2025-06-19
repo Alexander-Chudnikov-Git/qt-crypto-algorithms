@@ -1,0 +1,191 @@
+% Minted listings
+\tcbuselibrary{listings, minted, skins, breakable}
+
+\tcbset{listing engine=minted}
+
+\lstset { %
+    backgroundcolor=\color{white},
+    basicstyle=\ttfamily,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    commentstyle=\color{green},
+    extendedchars=true,
+    frame=single,
+    keepspaces=true,
+    keywordstyle=\color{blue},
+    language=c++,
+    numbers=none,
+    numbersep=5pt,
+    numberstyle=\tiny\color{blue},
+    rulecolor=\color{gray},
+    showspaces=false,
+    showtabs=false,
+    stepnumber=5,
+    stringstyle=\color{green},
+    tabsize=4,
+    title=\lstname
+}
+
+
+\definecolor{bgcolor}{HTML}{161615}
+\definecolor{fgcolor}{HTML}{232320}
+\definecolor{hgcolor}{HTML}{DC5A26}
+
+\definecolor{clcolor}{HTML}{FF605C}
+\definecolor{micolor}{HTML}{FFBD44}
+\definecolor{macolor}{HTML}{00CA4E}
+
+
+\tcbuselibrary{listingsutf8}
+
+\newtcblisting{terminalstyle}{
+        enhanced,
+        colback=bgcolor,
+        colframe=fgcolor,
+        rounded corners=south,
+        rounded corners=north,
+        boxrule=0mm,
+        drop fuzzy shadow,
+        width=\linewidth,
+        boxsep=5pt,
+        arc=2mm,
+        outer arc=2mm,
+        listing only,
+        listing options={
+            style=tcblatex,
+            language=shell,
+            color=\color{white},
+            basicstyle=\ttfamily\footnotesize\color{white},
+            keywordstyle=\color{white},
+            stringstyle=\color{white},
+            commentstyle=\color{white},
+            numberstyle=\tiny\color{white},
+            escapeinside=\,
+            breaklines=true,
+            frame=none,
+        },
+        title={\begin{tikzpicture}
+            \fill[clcolor] (0,0) circle (0.15);
+            \fill[micolor] (0.4,0) circle (0.15);
+            \fill[macolor] (0.8,0) circle (0.15);
+        \end{tikzpicture}\hspace{0.39\linewidth}\textcolor{white}{kitty}\hspace{0.5\linewidth}
+        },
+        minted language=hybris,
+        minted style=lightbulb,
+        minted options={
+                fontsize=\footnotesize,
+                tabsize=2,
+                breaklines,
+                autogobble
+        }
+}
+
+\newtcblisting{nvimstyle}{
+        enhanced,
+        colback=bgcolor,
+        colframe=fgcolor,
+        rounded corners=south,
+        rounded corners=north,
+        boxrule=0mm,
+        drop fuzzy shadow,
+        width=\linewidth,
+        boxsep=5pt,
+        arc=2mm,
+        outer arc=2mm,
+        listing only,
+        listing options={
+            style=tcblatex,
+            language=cpp,
+            color=\color{white},
+            basicstyle=\ttfamily\footnotesize\color{white},
+            keywordstyle=\color{white},
+            stringstyle=\color{white},
+            commentstyle=\color{white},
+            numberstyle=\tiny\color{white},
+            escapeinside=\,
+            breaklines=true,
+            frame=none,
+        },
+        title={\begin{tikzpicture}
+            \fill[clcolor] (0,0) circle (0.15);
+            \fill[micolor] (0.4,0) circle (0.15);
+            \fill[macolor] (0.8,0) circle (0.15);
+        \end{tikzpicture}\hspace{0.39\linewidth}\textcolor{white}{nvim}\hspace{0.5\linewidth}
+        },
+        minted language=cpp,
+        minted style=paraiso-dark,
+        minted options={
+                fontsize=\footnotesize,
+                tabsize=2,
+                breaklines,
+                autogobble
+        }
+}
+
+\newtcblisting{nvimasmstylea}{
+        enhanced,
+        colback=bgcolor,
+        colframe=fgcolor,
+        rounded corners=south,
+        rounded corners=north,
+        boxrule=0mm,
+        drop fuzzy shadow,
+        width=\linewidth,
+        boxsep=5pt,
+        arc=2mm,
+        outer arc=2mm,
+        listing only,
+        listing options={
+            style=tcblatex,
+            language=nasm,
+            color=\color{white},
+            basicstyle=\ttfamily\footnotesize\color{white},
+            keywordstyle=\color{white},
+            stringstyle=\color{white},
+            commentstyle=\color{white},
+            numberstyle=\tiny\color{white},
+            escapeinside=\,
+            breaklines=true,
+            frame=none,
+        },
+        title={\begin{tikzpicture}
+            \fill[clcolor] (0,0) circle (0.15);
+            \fill[micolor] (0.4,0) circle (0.15);
+            \fill[macolor] (0.8,0) circle (0.15);
+        \end{tikzpicture}\hspace{0.39\linewidth}\textcolor{white}{nvim}\hspace{0.5\linewidth}
+        },
+        minted language=nasm,
+        minted style=paraiso-dark,
+        minted options={
+                fontsize=\footnotesize,
+                tabsize=2,
+                breaklines,
+                autogobble
+        }
+}
+
+% Определим команду для отображения управляющих символов в моноширинном шрифте
+\newcommand{\ctrl}[1]{\texttt{#1}}
+
+\newcommand{\asciiitem}[4]{%
+  % Используем \makebox для примерного выравнивания, ширину подбираем экспериментально
+  % Или просто используем \texttt и надеемся на выравнивание моноширинного шрифта
+  \texttt{%
+    \small%
+    \makebox[1em][r]{#1} % Dec (right align, width 2.5em)
+    \makebox[1em][r]{#2} % Hex (right align, width 2.5em)
+    %\makebox[2em][r]{#3}   % Oct (right align, width 3em)
+    \makebox[2em][r]{#4}%                   % Char (left align implicitly)
+  }%
+}
+
+\newenvironment{definitionblock}{%
+  \begin{tcolorbox}[colback=gray!5!white, colframe=gray!60!black, fonttitle=\bfseries, title=Определение, breakable, pad at break=2mm, before skip=10pt, after skip=10pt]%
+}{%
+  \end{tcolorbox}%
+}
+
+% \setminted[cpp]{escapeinside=||, bgcolor=bgcolor, fontsize=\footnotesize, highlightcolor=\color{white}}
+
+\geometry{letterpaper,textwidth=7in,textheight=9.5in}

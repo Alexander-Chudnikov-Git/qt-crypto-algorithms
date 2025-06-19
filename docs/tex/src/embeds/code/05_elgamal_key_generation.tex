@@ -1,0 +1,28 @@
+\begin{nvimstyle}
+void ElGamal::generateParameters()
+{
+	boost::random::mt19937 rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+
+	// 1. Генерируем большое простое число p нужной битовой длины.
+	m_p = generatePrime(m_key_bits, rng);
+
+	// 2. Выбираем генератор g.
+	// Для простоты реализации часто выбирают небольшое число. 
+	m_g = 2;
+}
+\end{nvimstyle}
+\begin{nvimstyle}
+void ElGamal::generateKeys()
+{
+	boost::random::mt19937 rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+
+	// 1. Выбираем случайный секретный ключ d 
+	// в диапазоне 1 < d < p-1. Используем p-1, так как размер подгруппы
+	// может быть p-1 (если p - безопасное простое).
+	boost::random::uniform_int_distribution<BigInt> dist(2, m_p - 2);
+	m_d = dist(rng);
+
+	// 2. Вычисляем открытый ключ e: e = g^d mod p.
+	m_e = boost::multiprecision::powm(m_g, m_d, m_p);
+}
+\end{nvimstyle}

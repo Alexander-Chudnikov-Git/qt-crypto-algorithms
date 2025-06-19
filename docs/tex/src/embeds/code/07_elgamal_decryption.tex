@@ -1,0 +1,44 @@
+\begin{nvimstyle}
+QString ElGamal::decrypt(const QString& ciphertext)
+{
+	if (m_p == 0 || m_d == 0)
+	{
+		throw std::runtime_error("ElGamal is not initialized or private key is missing.");
+	}
+
+	// 1. Разделяем шифртекст на две hex-строки (r и c).
+	QStringList parts = ciphertext.split(' ');
+	if (parts.size() != 2)
+	{
+		throw std::runtime_error("Invalid ciphertext format for ElGamal. Expected 'r_hex c_hex'.");
+	}
+
+	// 2. Преобразуем hex-строки r и c обратно в BigInt.
+	BigInt r("0x" + parts[0].toStdString());
+	BigInt c("0x" + parts[1].toStdString());
+
+	// 3. Расшифровываем: s = c * (r^d)^-1 mod p.
+	//    Это эквивалентно s = c * r^(p-1-d) mod p, но вычисление через
+	//    обратный элемент более прямолинейно.
+
+	// Вычисляем r^d mod p
+	BigInt r_d = boost::multiprecision::powm(r, m_d, m_p);
+
+	// Находим мультипликативное обратное для r^d по модулю p
+	BigInt r_d_inv = inverse(r_d, m_p);
+
+	// Находим исходное сообщение s
+	BigInt decrypted_message = (c * r_d_inv) % m_p;
+
+	// 4. Преобразуем расшифрованное число обратно в QString (аналогично RSA::decrypt).
+	std::string hex_str = decrypted_message.str(0, std::ios_base::hex);
+	if (hex_str.length() % 2 != 0)
+	{
+		hex_str.insert(0, "0"); // Восстанавливаем потерянный ведущий ноль
+	}
+
+	QByteArray bytes = QByteArray::fromHex(QByteArray::fromStdString(hex_str));
+	return QString::fromUtf8(bytes);
+}
+
+\end{nvimstyle}
